@@ -30,6 +30,10 @@ serde-aux = "3"
 unicode-segmentation = "1"
 claim = "0.5"
 validator = "0.19.0"
+reqwest = { version = "0.12.9", default-features = false, features = [
+  "json",
+  "rustls-tls",
+] }
 
 [dependencies.sqlx]
 version = "0.8.2"
@@ -41,13 +45,14 @@ features = [
   "postgres",
   "uuid",
   "chrono",
-  "migrate"
+  "migrate",
 ]
 
 [dev-dependencies]
-reqwest = "0.12.9"
 fake = "3.0.1"
 quickcheck = "1.0.3"
 quickcheck_macros = "1.0.0"
 rand = "0.8.5"
 rand_core = "0.6.4"
+tokio = { version = "1", features = ["rt", "macros"] }
+wiremock = "0.5"
