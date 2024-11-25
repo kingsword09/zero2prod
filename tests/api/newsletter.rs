@@ -19,7 +19,7 @@ async fn newsletters_are_not_delivered_to_unconfirmed_subscribers() {
 
     let newsletter_request_body = serde_json::json!({
         "title": "Newsletter title",
-        "context": {
+        "content": {
             "text": "Newsletter body as plain text",
             "html": "<p>Newsletter body as HTML</p>"
         }
