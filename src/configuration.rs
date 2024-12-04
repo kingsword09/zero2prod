@@ -4,13 +4,14 @@ use sqlx::postgres::{PgConnectOptions, PgSslMode};
 use sqlx::ConnectOptions;
 
 use crate::domain::SubscriberEmail;
+use crate::email_client::EmailClient;
 
 #[derive(serde::Deserialize, Clone)]
 pub struct Settings {
     pub database: DatabaseSettings,
     pub application: ApplicationSettings,
     pub email_client: EmailClientSettings,
-    pub redis_uri: SecretString
+    pub redis_uri: SecretString,
 }
 
 #[derive(serde::Deserialize, Clone)]
@@ -19,7 +20,7 @@ pub struct ApplicationSettings {
     pub port: u16,
     pub host: String,
     pub base_url: String,
-    pub hmac_secret: SecretString
+    pub hmac_secret: SecretString,
 }
 
 #[derive(serde::Deserialize, Clone)]
@@ -62,7 +63,7 @@ pub struct EmailClientSettings {
     pub base_url: String,
     pub sender_email: String,
     pub authorization_token: SecretString,
-    pub timeout_milliseconds: u64
+    pub timeout_milliseconds: u64,
 }
 
 impl EmailClientSettings {
@@ -72,6 +73,17 @@ impl EmailClientSettings {
 
     pub fn timeout(&self) -> std::time::Duration {
         std::time::Duration::from_millis(self.timeout_milliseconds)
+    }
+
+    pub fn client(self) -> EmailClient {
+        let sender_email = self.sender().expect("Invalid sender email address.");
+        let timeout = self.timeout();
+        EmailClient::new(
+            self.base_url,
+            sender_email,
+            self.authorization_token,
+            timeout,
+        )
     }
 }
 
